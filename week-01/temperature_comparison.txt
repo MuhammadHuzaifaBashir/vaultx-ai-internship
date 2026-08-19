@@ -1,0 +1,22 @@
+Results
+Temperature	Run 1	Run 2	Run 3
+0	Protect the future today by launching your cybersecurity career with hands-on experience defending the digital world.	Secure your future by defending ours.	Secure your future while helping us secure the digital world.
+0.7	Secure your future by defending ours.	Secure tomorrow's digital frontier by launching your cybersecurity career with hands-on experience today.	Secure tomorrow's digital world while launching your career today through hands-on cybersecurity experience.
+1.0	Secure your future by defending ours.	Secure your future by defending ours.	Protect the future today by launching your cybersecurity career with hands-on experience defending the digital world.
+Analysis of Variance
+
+Temperature 0 produced three genuinely different outputs, which is a bit counterintuitive — temperature 0 is supposed to make the model deterministic, always picking the single most likely next token. In practice, Gemini's temperature-0 setting is close to deterministic but not perfectly so: there's still some floating-point non-determinism and internal sampling variation across separate API calls, so identical prompts can occasionally produce slightly different phrasing even at temp 0. The three outputs here are still similar in structure and message ("secure/protect your future... defending the digital world") even though the wording differs.
+
+Temperature 0.7 produced three distinct outputs, each phrased differently but consistent in tone and message. This is the expected behavior at a "moderate" temperature: enough randomness to vary word choice and structure, but the underlying idea stays coherent and on-message.
+
+Temperature 1.0 actually showed the least variety of the three — two of the three runs were identical, and the third repeated a line seen at temperature 0. This is a useful, slightly counterintuitive finding: higher temperature increases the chance of exploring lower-probability tokens, but it doesn't guarantee more variety in short runs, and for a short, narrow prompt like a one-line tagline, the model may keep converging back to a small handful of strong candidate phrasings regardless of temperature. Variance is probabilistic, not guaranteed — a larger sample size (10+ runs) would show the difference more reliably than 3 runs each.
+
+Overall pattern: temperature nudges the probability distribution the model samples from, but for short, low-entropy prompts (like a one-sentence tagline), the effect on visible output is inconsistent at small sample sizes. Effects are usually much more visible on longer, more open-ended generations.
+
+Temperature Choice by Use Case
+
+Support bot → 0 – 0.2 You want consistent, predictable, on-policy answers to the same or similar questions every time. Randomness is a liability here: a support bot giving different advice for the same question erodes trust and makes QA/testing unreliable. Low temperature favors the single most probable (usually safest, most conventional) response.
+
+Code generator → 0 – 0.3 Code needs to be correct and syntactically consistent above all else. Creativity in code generation usually just means bugs, unconventional patterns, or inconsistent style — not a benefit. Low temperature keeps the model anchored to the most statistically "normal" (and usually most correct) way of writing the requested code.
+
+Marketing copy tool → 0.7 – 1.0 Here, variety is the actual product — a marketer typically wants several different creative angles to choose between, not one "safest" answer repeated. Higher temperature increases the chance of unexpected, more original phrasing, which is a feature in this context, not a risk. (Our own test data above is a good cautionary note here too: even at 1.0, don't assume every run will be different — for best results in a real tool, generate more than 3 candidates and let the user pick.)
