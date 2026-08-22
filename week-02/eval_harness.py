@@ -2,7 +2,6 @@ import json
 import time
 from classifier import classify
 
-# Each case: (message, expected_category, expected_priority, expected_sentiment, expected_needs_human)
 EVAL_SET = [
     ("I've been charged twice for my subscription this month and no one has responded to my last two emails!", "billing", "high", "negative", True),
     ("How do I reset my password?", "account", "low", "neutral", False),
@@ -17,6 +16,23 @@ EVAL_SET = [
     ("This is unacceptable, I want a full refund immediately.", "billing", "high", "negative", True),
     ("I suspect someone accessed my account without permission.", "account", "urgent", "negative", True),
 ]
+
+
+def write_eval_markdown(rows, accuracy, prompt_version, filename="eval_results.md"):
+    lines = [f"# Task 05 - Evaluation Results ({prompt_version})\n"]
+    lines.append("## Accuracy\n")
+    for field, pct in accuracy.items():
+        lines.append(f"- **{field}**: {pct}%")
+    lines.append("\n## Per-Case Results\n")
+    lines.append("| Message | Expected | Actual | Correct |")
+    lines.append("|---|---|---|---|")
+    for r in rows:
+        msg = r["message"][:50].replace("|", "/")
+        lines.append(f"| {msg} | {r['expected']} | {r['actual']} | {'Yes' if r['all_correct'] else 'No'} |")
+
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+    print(f"Markdown written to {filename}")
 
 
 def run_eval(prompt_version="v1"):
@@ -42,13 +58,14 @@ def run_eval(prompt_version="v1"):
         correct["needs_human"] += human_ok
 
         rows.append({
-            "message": msg, "expected": (exp_cat, exp_pri, exp_sent, exp_human),
+            "message": msg,
+            "expected": (exp_cat, exp_pri, exp_sent, exp_human),
             "actual": (result.category, result.priority, result.sentiment, result.needs_human),
             "all_correct": cat_ok and pri_ok and sent_ok and human_ok
         })
 
-        print(f"{'✓' if (cat_ok and pri_ok and sent_ok and human_ok) else '✗'} {msg[:50]}")
-        time.sleep(5)  # stay under 15 req/min
+        print(f"{'CORRECT' if (cat_ok and pri_ok and sent_ok and human_ok) else 'WRONG  '} {msg[:50]}")
+        time.sleep(5)
 
     accuracy = {k: round(v / total * 100, 1) for k, v in correct.items()}
     print(f"\n--- Accuracy ({prompt_version}) ---")
@@ -59,8 +76,10 @@ def run_eval(prompt_version="v1"):
 
 
 if __name__ == "__main__":
-    rows, accuracy = run_eval("v1")
+    rows, accuracy = run_eval("v2")
 
-    with open("eval_results_v1.json", "w") as f:
+    with open("eval_results_v2.json", "w") as f:
         json.dump({"rows": rows, "accuracy": accuracy}, f, indent=2)
-    print("\nSaved to eval_results_v1.json")
+
+    write_eval_markdown(rows, accuracy, "v2", filename="eval_results_v2.md")
+    print("\nSaved to eval_results_v2.json and eval_results_v2.md")
