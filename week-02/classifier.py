@@ -1,10 +1,10 @@
 import os
 import json
+import time
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from google import genai
 from google.genai import types
-import time
 
 load_dotenv()
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
@@ -22,7 +22,13 @@ CLASSIFY_PROMPT = """You are a support ticket triage system. Classify the follow
 - category: one of "billing", "technical", "account", "general"
 - priority: one of "low", "medium", "high", "urgent" based on how time-sensitive/severe the issue is
 - sentiment: one of "positive", "neutral", "negative"
-- needs_human: true if this requires a human agent (angry customer, complex issue, refund request, legal/security concern), false if a bot could plausibly resolve it
+- needs_human: true if ANY of the following apply, otherwise false:
+  * an explicit refund or billing dispute request
+  * the customer has already contacted support more than once about the same issue
+  * any account security signal, including unusual login activity, account lockouts after login attempts, or suspected unauthorized access - even if the user does not use the word "hacked" or "security"
+  * a legal or compliance concern
+  * an angry, frustrated, or demanding tone
+  False only for simple, routine requests a bot could fully resolve on its own (password resets, general plan/info questions, minor slowness, first-time bug reports without repeated contact).
 
 Support message: {message}
 """
@@ -76,8 +82,8 @@ def run_batch_test():
     """Classifies every message in TEST_MESSAGES, prints results, and writes classifier.md."""
     results = []
     md_lines = []
-    md_lines.append("# Task 03 — Classifier Results\n")
-    md_lines.append(f"**Model:** gemini-2.5-flash")
+    md_lines.append("# Task 03 - Classifier Results\n")
+    md_lines.append(f"**Model:** gemini-3.5-flash-lite")
     md_lines.append(f"**Test set size:** {len(TEST_MESSAGES)}\n")
     md_lines.append("| # | Message | Category | Priority | Sentiment | Needs Human |")
     md_lines.append("|---|---|---|---|---|---|")
@@ -96,7 +102,8 @@ def run_batch_test():
                 f"| {i} | {safe_msg} | {result.category} | {result.priority} | {result.sentiment} | {result.needs_human} |"
             )
             results.append({"message": msg, **result.model_dump()})
-            time.sleep(4)
+
+        time.sleep(4)
 
     with open("classifier.md", "w", encoding="utf-8") as f:
         f.write("\n".join(md_lines))
