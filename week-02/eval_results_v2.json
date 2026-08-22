@@ -1,0 +1,202 @@
+{
+  "rows": [
+    {
+      "message": "I've been charged twice for my subscription this month and no one has responded to my last two emails!",
+      "expected": [
+        "billing",
+        "high",
+        "negative",
+        true
+      ],
+      "actual": [
+        "billing",
+        "urgent",
+        "negative",
+        true
+      ],
+      "all_correct": false
+    },
+    {
+      "message": "How do I reset my password?",
+      "expected": [
+        "account",
+        "low",
+        "neutral",
+        false
+      ],
+      "actual": [
+        "account",
+        "low",
+        "neutral",
+        false
+      ],
+      "all_correct": true
+    },
+    {
+      "message": "Your app keeps crashing every time I try to upload a file.",
+      "expected": [
+        "technical",
+        "high",
+        "negative",
+        true
+      ],
+      "actual": [
+        "technical",
+        "medium",
+        "neutral",
+        false
+      ],
+      "all_correct": false
+    },
+    {
+      "message": "Can you tell me what plans you offer?",
+      "expected": [
+        "general",
+        "low",
+        "neutral",
+        false
+      ],
+      "actual": [
+        "general",
+        "low",
+        "neutral",
+        false
+      ],
+      "all_correct": true
+    },
+    {
+      "message": "This is the third time I've contacted support about the same bug. I'm extremely frustrated.",
+      "expected": [
+        "technical",
+        "high",
+        "negative",
+        true
+      ],
+      "actual": [
+        "technical",
+        "high",
+        "negative",
+        true
+      ],
+      "all_correct": true
+    },
+    {
+      "message": "Just wanted to say thanks, your support team fixed my issue super fast!",
+      "expected": [
+        "general",
+        "low",
+        "positive",
+        false
+      ],
+      "actual": [
+        "general",
+        "low",
+        "positive",
+        false
+      ],
+      "all_correct": true
+    },
+    {
+      "message": "I need to update my billing address.",
+      "expected": [
+        "billing",
+        "low",
+        "neutral",
+        false
+      ],
+      "actual": [
+        "billing",
+        "low",
+        "neutral",
+        false
+      ],
+      "all_correct": true
+    },
+    {
+      "message": "The website is down for me, is there an outage?",
+      "expected": [
+        "technical",
+        "high",
+        "neutral",
+        false
+      ],
+      "actual": [
+        "technical",
+        "high",
+        "neutral",
+        false
+      ],
+      "all_correct": true
+    },
+    {
+      "message": "I think I was overcharged, can someone check my invoice?",
+      "expected": [
+        "billing",
+        "medium",
+        "neutral",
+        true
+      ],
+      "actual": [
+        "billing",
+        "medium",
+        "neutral",
+        true
+      ],
+      "all_correct": true
+    },
+    {
+      "message": "My account got locked after I tried logging in from a new device.",
+      "expected": [
+        "account",
+        "high",
+        "negative",
+        true
+      ],
+      "actual": [
+        "account",
+        "high",
+        "neutral",
+        true
+      ],
+      "all_correct": false
+    },
+    {
+      "message": "This is unacceptable, I want a full refund immediately.",
+      "expected": [
+        "billing",
+        "high",
+        "negative",
+        true
+      ],
+      "actual": [
+        "billing",
+        "urgent",
+        "negative",
+        true
+      ],
+      "all_correct": false
+    },
+    {
+      "message": "I suspect someone accessed my account without permission.",
+      "expected": [
+        "account",
+        "urgent",
+        "negative",
+        true
+      ],
+      "actual": [
+        "account",
+        "urgent",
+        "negative",
+        true
+      ],
+      "all_correct": true
+    }
+  ],
+  "accuracy": {
+    "category": 100.0,
+    "priority": 75.0,
+    "sentiment": 83.3,
+    "needs_human": 91.7
+  }
+}
