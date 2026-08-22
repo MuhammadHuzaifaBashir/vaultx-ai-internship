@@ -44,9 +44,9 @@
         "technical",
         "high",
         "negative",
-        false
+        true
       ],
-      "all_correct": false
+      "all_correct": true
     },
     {
       "message": "Can you tell me what plans you offer?",
@@ -139,10 +139,10 @@
       "actual": [
         "billing",
         "medium",
-        "neutral",
+        "negative",
         true
       ],
-      "all_correct": true
+      "all_correct": false
     },
     {
       "message": "My account got locked after I tried logging in from a new device.",
@@ -196,7 +196,7 @@
   "accuracy": {
     "category": 100.0,
     "priority": 91.7,
-    "sentiment": 100.0,
-    "needs_human": 83.3
+    "sentiment": 91.7,
+    "needs_human": 91.7
   }
 }
