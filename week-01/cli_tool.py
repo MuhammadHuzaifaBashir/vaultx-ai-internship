@@ -11,15 +11,15 @@ def summarise(text, client):
 Text:
 {text}"""
 
-    result = client.send_message(prompt, max_tokens=500)
+    text_result, error = client.send_message(prompt)
 
-    if "error" in result:
-        print(f"Error: {result['error']}")
+    if error:
+        print(f"Error: {error}")
         return
 
-    print(result["text"])
-    print(f"\n[Model used: {result['model_used']}]")
-    print(f"[Tokens used — input: {result['input_tokens']}, output: {result['output_tokens']}]")
+    print(text_result)
+    print(f"\n[Model used: {client.model}]")
+    print(f"[Tokens used — total: {client.total_tokens_used}]")
 
 
 def main():
