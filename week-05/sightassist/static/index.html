@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>SightAssist</title>
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #151920;
+    --surface-2: #1c212b;
+    --accent: #4f8cff;
+    --accent-active: #6ea1ff;
+    --text: #f3f4f6;
+    --muted: #8b93a1;
+    --danger: #ff6363;
+    --listening: #34d17a;
+    --border: #262c38;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+
+  header { padding: 14px 20px 6px; text-align: center; }
+  header h1 {
+    font-size: 21px; margin: 0; letter-spacing: 0.3px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+  }
+  header .badge {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.5px; color: var(--accent-active);
+    border: 1px solid var(--accent); border-radius: 20px; padding: 2px 7px;
+    text-transform: uppercase;
+  }
+
+  .mic-indicator {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-size: 12px; color: var(--muted); padding: 6px 0 4px;
+  }
+  .mic-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); transition: background 0.2s; }
+  .mic-dot.listening { background: var(--listening); animation: pulse 1.3s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .mode-strip {
+    display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .mode-strip::-webkit-scrollbar { display: none; }
+  .mode-btn {
+    flex: 0 0 auto; padding: 9px 14px; border-radius: 20px;
+    border: 1.5px solid var(--border); background: var(--surface); color: var(--muted);
+    font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap;
+  }
+  .mode-btn[aria-pressed="true"] {
+    border-color: var(--accent); background: var(--accent); color: #fff;
+  }
+
+  .camera-wrap {
+    flex: 1 1 auto; position: relative; margin: 4px 14px; border-radius: 20px;
+    overflow: hidden; background: #000; display: flex;
+    align-items: center; justify-content: center; min-height: 46vh;
+    border: 1px solid var(--border);
+  }
+  video, canvas { width: 100%; height: 100%; object-fit: cover; }
+  video.mirrored { transform: scaleX(-1); }
+  canvas { display: none; }
+
+  .cam-controls {
+    position: absolute; top: 12px; right: 12px; z-index: 5;
+    display: flex; flex-direction: column; gap: 9px;
+  }
+  .icon-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.25); background: rgba(10,12,16,0.65);
+    backdrop-filter: blur(4px);
+    color: var(--text); font-size: 17px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .icon-btn.active { border-color: var(--listening); background: rgba(52,209,122,0.28); }
+
+  .status-card {
+    margin: 10px 14px 0; min-height: 46px; padding: 13px 16px;
+    border-radius: 14px; background: var(--surface); font-size: 14.5px; line-height: 1.4;
+    border: 1px solid var(--border);
+  }
+  .status-card.error { color: var(--danger); border-color: rgba(255,99,99,0.35); }
+
+  .meta-row {
+    margin: 6px 16px 0; font-size: 11px; color: var(--muted);
+    display: flex; justify-content: space-between; min-height: 14px;
+  }
+
+  .action-row {
+    padding: 14px 16px; display: flex; align-items: center;
+    justify-content: center; gap: 18px;
+  }
+  #captureBtn {
+    width: 72px; height: 72px; border-radius: 50%;
+    border: 4px solid var(--accent); background: var(--text); cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(79,140,255,0.15);
+  }
+  #captureBtn:active { background: var(--accent-active); }
+  #captureBtn:disabled { opacity: 0.45; }
+
+  .pill-btn {
+    padding: 12px 16px; border-radius: 14px; border: 1.5px solid var(--border);
+    background: var(--surface); color: var(--text); font-size: 12.5px;
+    font-weight: 600; cursor: pointer; min-width: 78px;
+  }
+  .pill-btn:disabled { opacity: 0.4; }
+
+  #talkBtn {
+    background: var(--surface-2); border-color: var(--accent);
+  }
+  #talkBtn.recording { background: var(--danger); border-color: var(--danger); color: #fff; }
+
+  .history-strip {
+    display: flex; gap: 8px; padding: 2px 16px 12px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .history-thumb {
+    flex: 0 0 auto; width: 50px; height: 50px; border-radius: 10px;
+    overflow: hidden; border: 1.5px solid var(--border); cursor: pointer; background: #000;
+  }
+  .history-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .hint-text {
+    margin: 0 16px 8px; font-size: 10.5px; color: var(--muted);
+    text-align: center; line-height: 1.5;
+  }
+
+  #viewerOverlay {
+    display: none; position: fixed; inset: 0; background: rgba(6,7,10,0.96);
+    z-index: 50; flex-direction: column;
+  }
+  #viewerOverlay.open { display: flex; }
+  .viewer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; }
+  .viewer-header span { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .viewer-header button { background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; }
+  #viewerImageWrap { flex: 1; position: relative; overflow: hidden; }
+  #viewerImage { width: 100%; height: 100%; object-fit: contain; cursor: crosshair; }
+  .viewer-hint { text-align: center; color: var(--muted); font-size: 12px; padding: 8px 16px 2px; }
+  #viewerDescription { padding: 12px 16px 24px; font-size: 15px; line-height: 1.45; min-height: 40px; }
+  .tap-marker {
+    position: absolute; width: 24px; height: 24px; border-radius: 50%;
+    border: 2px solid var(--accent); transform: translate(-50%, -50%); pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SightAssist <span class="badge">Beta</span></h1>
+</header>
+
+<div class="mic-indicator">
+  <div class="mic-dot" id="micDot"></div>
+  <span id="micStatus">Voice control off</span>
+</div>
+
+<div class="mode-strip" role="tablist" aria-label="Description mode">
+  <button class="mode-btn" id="mode-scene" role="tab" aria-pressed="true" onclick="setMode('scene')">Scene</button>
+  <button class="mode-btn" id="mode-object" role="tab" aria-pressed="false" onclick="setMode('object')">Object</button>
+  <button class="mode-btn" id="mode-text" role="tab" aria-pressed="false" onclick="setMode('text')">Read Text</button>
+  <button class="mode-btn" id="mode-hazard" role="tab" aria-pressed="false" onclick="setMode('hazard')">Hazards</button>
+  <button class="mode-btn" id="mode-navigate" role="tab" aria-pressed="false" onclick="setMode('navigate')">Navigate</button>
+</div>
+
+<div class="camera-wrap">
+  <video id="video" autoplay playsinline muted></video>
+  <canvas id="canvas"></canvas>
+  <div class="cam-controls">
+    <button class="icon-btn" onclick="flipCamera()" aria-label="Switch camera">⟲</button>
+    <button class="icon-btn" id="torchBtn" onclick="toggleTorch()" aria-label="Toggle torch">💡</button>
+    <button class="icon-btn active" id="micToggleBtn" onclick="toggleMic()" aria-label="Turn voice control on or off">🎤</button>
+  </div>
+</div>
+
+<div class="status-card" id="status" role="status" aria-live="polite">
+  Ready. Tap the button or hold the mic to speak.
+</div>
+<div class="meta-row">
+  <span id="latencyInfo"></span>
+  <span id="attemptsInfo"></span>
+</div>
+
+<div class="action-row">
+  <button class="pill-btn" id="repeatBtn" onclick="repeatLast()" disabled>Repeat</button>
+  <button id="captureBtn" aria-label="Capture photo and describe" onclick="captureAndDescribe()"></button>
+  <button class="pill-btn" id="detailBtn" onclick="moreDetail()" disabled>More Detail</button>
+</div>
+
+<div class="action-row" style="padding-top:0;">
+  <button class="pill-btn" id="talkBtn" style="min-width: 220px;">🎙️ Hold to Speak</button>
+</div>
+
+<div class="hint-text">
+  Say: "capture" · "more detail" · "torch on/off" · "front/back camera" · "scene / object / read text / hazard / navigate mode" · "repeat"
+</div>
+
+<div class="history-strip" id="historyStrip" aria-label="Past captures"></div>
+
+<div id="viewerOverlay">
+  <div class="viewer-header">
+    <span id="viewerModeLabel"></span>
+    <button onclick="closeViewer()" aria-label="Close">✕</button>
+  </div>
+  <div id="viewerImageWrap">
+    <img id="viewerImage" alt="Captured photo">
+  </div>
+  <div class="viewer-hint">Tap anywhere on the photo for more detail about that spot</div>
+  <div id="viewerDescription"></div>
+</div>
+
+<script>
+let currentMode = "scene";
+let hasDescription = false;
+let facingMode = "environment";
+let currentStream = null;
+let currentVideoTrack = null;
+let torchOn = false;
+let lastCapturedBlob = null;
+
+const history = [];
+
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const statusEl = document.getElementById("status");
+const captureBtn = document.getElementById("captureBtn");
+const repeatBtn = document.getElementById("repeatBtn");
+const detailBtn = document.getElementById("detailBtn");
+const historyStrip = document.getElementById("historyStrip");
+const latencyInfo = document.getElementById("latencyInfo");
+const attemptsInfo = document.getElementById("attemptsInfo");
+const torchBtn = document.getElementById("torchBtn");
+const talkBtn = document.getElementById("talkBtn");
+const micDot = document.getElementById("micDot");
+const micStatus = document.getElementById("micStatus");
+
+const viewerOverlay = document.getElementById("viewerOverlay");
+const viewerImage = document.getElementById("viewerImage");
+const viewerDescription = document.getElementById("viewerDescription");
+const viewerModeLabel = document.getElementById("viewerModeLabel");
+
+const modeNames = { scene: "Scene", object: "Object", text: "Read text", hazard: "Hazard", navigate: "Navigate" };
+const API_BASE = window.location.origin;
+
+function vibrate(pattern) { if (navigator.vibrate) navigator.vibrate(pattern); }
+
+function setMode(mode, announce = true) {
+  currentMode = mode;
+  Object.keys(modeNames).forEach(m => {
+    document.getElementById("mode-" + m).setAttribute("aria-pressed", m === mode ? "true" : "false");
+  });
+  if (announce) speak(`${modeNames[mode]} mode selected.`);
+}
+
+function setStatus(message, kind) {
+  statusEl.textContent = message;
+  statusEl.className = "status-card " + (kind || "");
+}
+
+function speak(text) {
+  pauseListeningForSpeech();
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 1.0;
+  utterance.onend = resumeListeningAfterSpeech;
+  utterance.onerror = resumeListeningAfterSpeech;
+  window.speechSynthesis.speak(utterance);
+}
+
+function pauseListeningForSpeech() {
+  // Stop the mic while the app is talking, so it never hears its own voice
+  // through the speaker and mistakes it for a command (this was causing a
+  // feedback loop of "sorry, I didn't understand" repeating forever).
+  if (recognition && listening) {
+    shouldKeepListening = false; // prevent auto-restart from firing mid-speech
+    recognition.stop();
+  }
+}
+
+function resumeListeningAfterSpeech() {
+  if (usingContinuousRecognition && micEnabled) {
+    setTimeout(() => { shouldKeepListening = true; startListening(); }, 400);
+  }
+}
+
+// ---------- Camera ----------
+
+async function initCamera() {
+  try {
+    if (currentStream) currentStream.getTracks().forEach(t => t.stop());
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode },
+      audio: false,
+    });
+    currentStream = stream;
+    currentVideoTrack = stream.getVideoTracks()[0];
+    video.srcObject = stream;
+    video.classList.toggle("mirrored", facingMode === "user"); // mirror only the front camera, like a normal mirror
+    torchOn = false;
+    torchBtn.classList.remove("active");
+  } catch (err) {
+    setStatus("Camera access failed: " + err.message, "error");
+    speak("Camera access failed. Please check permissions and reload.");
+  }
+}
+
+function flipCamera() {
+  facingMode = facingMode === "environment" ? "user" : "environment";
+  vibrate(20);
+  speak(facingMode === "user" ? "Front camera." : "Rear camera.");
+  initCamera();
+}
+
+async function toggleTorch() {
+  if (!currentVideoTrack) return;
+  const capabilities = currentVideoTrack.getCapabilities ? currentVideoTrack.getCapabilities() : {};
+  if (!capabilities.torch) {
+    speak("Torch is not supported on this device or browser.");
+    setStatus("Torch not supported on this device (common on iPhone).", "error");
+    return;
+  }
+  try {
+    torchOn = !torchOn;
+    await currentVideoTrack.applyConstraints({ advanced: [{ torch: torchOn }] });
+    torchBtn.classList.toggle("active", torchOn);
+    speak(torchOn ? "Torch on." : "Torch off.");
+    vibrate(20);
+  } catch (err) {
+    speak("Could not control the torch.");
+  }
+}
+
+// ---------- Capture / Detail / Repeat ----------
+
+async function captureAndDescribe() {
+  captureBtn.disabled = true;
+  vibrate(40);
+  setStatus("Capturing and analyzing...");
+  latencyInfo.textContent = "";
+  attemptsInfo.textContent = "";
+
+  try {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+
+    if (video.classList.contains("mirrored")) {
+      // Undo the visual mirror for the actual captured frame — the preview
+      // mirrors for user comfort, but the analyzed photo should be un-mirrored
+      // so text/objects aren't flipped.
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+    }
+    ctx.drawImage(video, 0, 0);
+
+    const fullDataUrl = canvas.toDataURL("image/jpeg", 0.85);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.85));
+    lastCapturedBlob = blob;
+
+    const formData = new FormData();
+    formData.append("image", blob, "capture.jpg");
+    formData.append("mode", currentMode);
+
+    const response = await fetch(`${API_BASE}/describe`, { method: "POST", body: formData });
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.detail || `Server error (${response.status})`);
+    }
+
+    const data = await response.json();
+    setStatus(data.description);
+    speak(data.description);
+    vibrate([30, 40, 30]);
+
+    latencyInfo.textContent = `${data.latency_ms} ms`;
+    if (data.attempts > 1) attemptsInfo.textContent = `Retried ${data.attempts - 1}x`;
+
+    hasDescription = true;
+    repeatBtn.disabled = false;
+    detailBtn.disabled = false;
+
+    addToHistory(fullDataUrl, data.description, currentMode);
+
+  } catch (err) {
+    setStatus("Something went wrong: " + err.message, "error");
+    speak("Sorry, something went wrong. Please try again.");
+    vibrate([80, 40, 80]);
+  } finally {
+    captureBtn.disabled = false;
+  }
+}
+
+async function moreDetail() {
+  if (!lastCapturedBlob) {
+    speak("Please capture a photo first.");
+    return;
+  }
+  detailBtn.disabled = true;
+  setStatus("Getting more detail...");
+  vibrate(30);
+
+  try {
+    const formData = new FormData();
+    formData.append("image", lastCapturedBlob, "capture.jpg");
+    formData.append("mode", currentMode);
+
+    const response = await fetch(`${API_BASE}/describe-detailed`, { method: "POST", body: formData });
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.detail || `Server error (${response.status})`);
+    }
+    const data = await response.json();
+    setStatus(data.description);
+    speak(data.description);
+    vibrate([30, 40, 30]);
+  } catch (err) {
+    setStatus("Could not get more detail: " + err.message, "error");
+    speak("Sorry, could not get more detail.");
+  } finally {
+    detailBtn.disabled = false;
+  }
+}
+
+async function repeatLast() {
+  if (!hasDescription) return;
+  try {
+    const response = await fetch(`${API_BASE}/repeat`);
+    if (!response.ok) throw new Error("Nothing to repeat yet.");
+    const data = await response.json();
+    speak(data.description);
+    vibrate(30);
+  } catch (err) {
+    speak("Nothing to repeat yet. Capture something first.");
+  }
+}
+
+// ---------- History / Viewer ----------
+
+function addToHistory(fullDataUrl, description, mode) {
+  history.unshift({ fullDataUrl, description, mode });
+  renderHistory();
+}
+
+function renderHistory() {
+  historyStrip.innerHTML = "";
+  history.forEach((item, idx) => {
+    const div = document.createElement("div");
+    div.className = "history-thumb";
+    div.onclick = () => openViewer(idx);
+    const img = document.createElement("img");
+    img.src = item.fullDataUrl;
+    div.appendChild(img);
+    historyStrip.appendChild(div);
+  });
+}
+
+let activeItem = null;
+
+function openViewer(idx) {
+  activeItem = history[idx];
+  viewerImage.src = activeItem.fullDataUrl;
+  viewerDescription.textContent = activeItem.description;
+  viewerModeLabel.textContent = modeNames[activeItem.mode];
+  viewerOverlay.classList.add("open");
+  speak(activeItem.description);
+}
+
+function closeViewer() {
+  viewerOverlay.classList.remove("open");
+  window.speechSynthesis.cancel();
+  document.querySelectorAll(".tap-marker").forEach(el => el.remove());
+}
+
+viewerImage.addEventListener("click", async (e) => {
+  const rect = viewerImage.getBoundingClientRect();
+  const xFrac = (e.clientX - rect.left) / rect.width;
+  const yFrac = (e.clientY - rect.top) / rect.height;
+
+  document.querySelectorAll(".tap-marker").forEach(el => el.remove());
+  const marker = document.createElement("div");
+  marker.className = "tap-marker";
+  marker.style.left = (e.clientX - rect.left) + "px";
+  marker.style.top = (e.clientY - rect.top) + "px";
+  document.getElementById("viewerImageWrap").appendChild(marker);
+
+  vibrate(25);
+  viewerDescription.textContent = "Looking closer...";
+
+  try {
+    const cropBlob = await cropRegionFromDataUrl(activeItem.fullDataUrl, xFrac, yFrac);
+    const formData = new FormData();
+    formData.append("image", cropBlob, "region.jpg");
+    const response = await fetch(`${API_BASE}/describe-region`, { method: "POST", body: formData });
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.detail || `Server error (${response.status})`);
+    }
+    const data = await response.json();
+    viewerDescription.textContent = data.description;
+    speak(data.description);
+    vibrate([30, 40, 30]);
+  } catch (err) {
+    viewerDescription.textContent = "Could not analyze that spot: " + err.message;
+    speak("Sorry, could not analyze that spot.");
+  }
+});
+
+function cropRegionFromDataUrl(dataUrl, xFrac, yFrac) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const cropSize = Math.round(Math.min(img.width, img.height) * 0.35);
+      const cx = Math.round(xFrac * img.width);
+      const cy = Math.round(yFrac * img.height);
+      const sx = Math.max(0, Math.min(img.width - cropSize, cx - cropSize / 2));
+      const sy = Math.max(0, Math.min(img.height - cropSize, cy - cropSize / 2));
+      const cropCanvas = document.createElement("canvas");
+      cropCanvas.width = cropSize;
+      cropCanvas.height = cropSize;
+      cropCanvas.getContext("2d").drawImage(img, sx, sy, cropSize, cropSize, 0, 0, cropSize, cropSize);
+      cropCanvas.toBlob(blob => resolve(blob), "image/jpeg", 0.9);
+    };
+    img.onerror = reject;
+    img.src = dataUrl;
+  });
+}
+
+// ---------- Voice input ----------
+// Two paths, chosen automatically based on browser support:
+//  1. Continuous Web Speech API (works on Android Chrome) — always listening.
+//  2. Hold-to-talk fallback (works everywhere, including iOS Safari) — records
+//     audio while the mic button is held, sends it to /transcribe on release.
+//     This is per-press, not continuous, so it costs one API call per command,
+//     same as tapping a button.
+
+let recognition = null;
+let usingContinuousRecognition = false;
+let listening = false;
+let shouldKeepListening = false;
+let micEnabled = true;
+
+const micToggleBtn = document.getElementById("micToggleBtn");
+
+function toggleMic() {
+  micEnabled = !micEnabled;
+  micToggleBtn.classList.toggle("active", micEnabled);
+
+  if (usingContinuousRecognition) {
+    if (micEnabled) {
+      shouldKeepListening = true;
+      startListening();
+    } else {
+      shouldKeepListening = false;
+      if (recognition) recognition.stop();
+      listening = false;
+      updateMicUI();
+    }
+  }
+  micStatus.textContent = micEnabled
+    ? (usingContinuousRecognition ? "Listening..." : "Hold the mic button to speak")
+    : "Voice control off";
+
+  if (!usingContinuousRecognition) {
+    talkBtn.disabled = !micEnabled;
+  }
+}
+
+function setupVoiceInput() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (SR) {
+    usingContinuousRecognition = true;
+    recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = "en-US";
+
+    recognition.onresult = (event) => {
+      const last = event.results[event.results.length - 1];
+      handleVoiceCommand(last[0].transcript.trim().toLowerCase());
+    };
+    recognition.onerror = (event) => {
+      if (event.error !== "no-speech") console.warn("Speech recognition error:", event.error);
+    };
+    recognition.onend = () => {
+      listening = false;
+      updateMicUI();
+      if (shouldKeepListening) setTimeout(() => { if (shouldKeepListening) startListening(); }, 300);
+    };
+
+    startListening(); // auto-start continuous listening where supported
+    talkBtn.style.display = "none"; // hold-to-talk not needed on this browser
+
+  } else {
+    // Fallback: hold-to-talk using MediaRecorder + server-side transcription
+    micStatus.textContent = "Hold the mic button to speak";
+    setupHoldToTalk();
+  }
+}
+
+function startListening() {
+  if (!recognition) return;
+  try {
+    recognition.start();
+    listening = true;
+    shouldKeepListening = true;
+    updateMicUI();
+  } catch (err) { /* already started — ignore */ }
+}
+
+function updateMicUI() {
+  micDot.classList.toggle("listening", listening);
+  if (usingContinuousRecognition) {
+    micStatus.textContent = listening ? "Listening..." : "Reconnecting...";
+  }
+}
+
+let mediaRecorder = null;
+let audioChunks = [];
+
+function setupHoldToTalk() {
+  talkBtn.addEventListener("mousedown", startRecording);
+  talkBtn.addEventListener("touchstart", (e) => { e.preventDefault(); startRecording(); });
+  talkBtn.addEventListener("mouseup", stopRecording);
+  talkBtn.addEventListener("touchend", (e) => { e.preventDefault(); stopRecording(); });
+}
+
+async function startRecording() {
+  if (!micEnabled) return;
+  try {
+    const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(micStream);
+    audioChunks = [];
+    mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+    mediaRecorder.start();
+
+    talkBtn.classList.add("recording");
+    talkBtn.textContent = "🔴 Listening...";
+    micDot.classList.add("listening");
+    micStatus.textContent = "Listening...";
+    vibrate(30);
+  } catch (err) {
+    speak("Microphone access failed. Please check permissions.");
+  }
+}
+
+function stopRecording() {
+  if (!mediaRecorder || mediaRecorder.state !== "recording") return;
+
+  mediaRecorder.onstop = async () => {
+    talkBtn.classList.remove("recording");
+    talkBtn.textContent = "🎙️ Hold to Speak";
+    micDot.classList.remove("listening");
+    micStatus.textContent = "Processing...";
+
+    const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+    if (audioBlob.size < 1000) {
+      micStatus.textContent = "Hold the mic button to speak";
+      return; // too short, probably an accidental tap
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "command.webm");
+      const response = await fetch(`${API_BASE}/transcribe`, { method: "POST", body: formData });
+      if (!response.ok) throw new Error("Transcription failed");
+      const data = await response.json();
+      handleVoiceCommand(data.transcript.trim().toLowerCase());
+    } catch (err) {
+      speak("Sorry, I didn't catch that.");
+    } finally {
+      micStatus.textContent = "Hold the mic button to speak";
+    }
+  };
+
+  mediaRecorder.stop();
+  mediaRecorder.stream.getTracks().forEach(t => t.stop());
+}
+
+function handleVoiceCommand(transcript) {
+  console.log("Heard:", transcript);
+
+  if (transcript.includes("capture") || transcript.includes("what's this") || transcript.includes("what is this") || transcript.includes("take a picture") || transcript.includes("take a photo")) {
+    captureAndDescribe();
+  } else if (transcript.includes("more detail") || transcript.includes("tell me more") || transcript.includes("more information")) {
+    moreDetail();
+  } else if (transcript.includes("torch on") || transcript.includes("flashlight on") || transcript.includes("light on")) {
+    if (!torchOn) toggleTorch();
+  } else if (transcript.includes("torch off") || transcript.includes("flashlight off") || transcript.includes("light off")) {
+    if (torchOn) toggleTorch();
+  } else if (transcript.includes("front camera") || transcript.includes("switch camera") || transcript.includes("flip camera")) {
+    flipCamera();
+  } else if (transcript.includes("back camera") || transcript.includes("rear camera")) {
+    if (facingMode !== "environment") flipCamera();
+  } else if (transcript.includes("repeat")) {
+    repeatLast();
+  } else if (transcript.includes("navigate")) {
+    setMode("navigate");
+  } else if (transcript.includes("scene")) {
+    setMode("scene");
+  } else if (transcript.includes("object")) {
+    setMode("object");
+  } else if (transcript.includes("read text") || transcript.includes("text mode")) {
+    setMode("text");
+  } else if (transcript.includes("hazard")) {
+    setMode("hazard");
+  }
+  // Unrecognized speech/background noise is silently ignored on purpose —
+  // speaking "sorry, I didn't understand" for every stray sound is what
+  // caused the earlier feedback loop, and is just annoying in general.
+}
+
+initCamera();
+setupVoiceInput();
+</script>
+
+</body>
+</html>

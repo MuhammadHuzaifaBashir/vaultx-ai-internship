@@ -1,0 +1,15 @@
+
+=== Temperature 0 ===
+Run 1: Where great days are brewed, one cup at a time.                                  
+Run 2: [Failed after retries]
+Run 3: Crafted for the daily grind,
+
+=== Temperature 0.7 ===
+Run 1: **"Where every cup is brewed with passion and
+Run 2: "Brewed for your best moments
+Run 3: Where every cup feels like coming home.
+
+=== Temperature 1.0 ===
+Run 1: Where every cup feels like coming home.
+Run 2: Fueling your everyday moments, one handcrafted
+Run 3: **"Your daily pause, poured to perfection."**

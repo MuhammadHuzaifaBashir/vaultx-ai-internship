@@ -1,0 +1,31 @@
+NimbusWorks Inc. — New Employee Onboarding Guide
+Document ID: HR-ONB-007
+Last Updated: February 2026
+
+1. Before Your First Day
+IT will ship your laptop to arrive 2 business days before your start date. You will receive a welcome email with your company email address and instructions to set up MFA. Please complete the pre-boarding paperwork (tax forms, direct deposit, emergency contacts) in the HR portal before day one.
+
+2. Your First Day
+Arrive at the office by 9:30 AM (or join the virtual welcome session if remote). You'll meet your onboarding buddy, get a facilities tour, and complete a laptop setup session with IT. Your manager will walk you through your 30/60/90-day plan.
+
+3. First Week Checklist
+- Complete mandatory security awareness training (see IT-SEC-014).
+- Set up your accounts: email, Slack, Google Workspace, and the HR portal.
+- Meet with your manager for a 1:1 to review goals and expectations.
+- Join your team's standing meetings (calendar invites are sent by your manager).
+- Review the Employee Leave Policy (HR-POL-002) and Expense Policy (FIN-POL-003).
+
+4. Probation Period
+All new hires undergo a 90-day probation period. A formal check-in occurs at day 30, day 60, and day 90 with your manager and an HR representative. Full benefits (including the 401k match) begin after successful completion of probation.
+
+5. Equipment & Access
+Standard equipment includes a laptop, monitor, and headset. Additional equipment requests go through the IT Request Form. Access to internal tools (GitHub, AWS, Notion, etc.) is provisioned based on your role and requires manager approval, typically completed within 2 business days.
+
+6. Who to Contact
+- IT support: it-help@nimbusworks.example
+- HR questions: hr@nimbusworks.example
+- Payroll: payroll@nimbusworks.example
+- Security incidents: security@nimbusworks.example
+
+7. Buddy Program
+Every new hire is paired with an onboarding buddy from a different team for their first 60 days. The buddy is a resource for informal questions — process, culture, "who do I ask about X" — separate from your manager.

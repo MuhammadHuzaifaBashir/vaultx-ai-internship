@@ -1,0 +1,24 @@
+NimbusWorks Inc. — Remote & Hybrid Work Policy
+Document ID: HR-POL-009
+Last Updated: May 2026
+
+1. Work Arrangements
+NimbusWorks operates a hybrid model by default: employees are expected in the office at least 2 days per week (Tuesday and Thursday are the core in-office days for most teams). Fully remote arrangements require director-level approval and are evaluated on a role-by-role basis.
+
+2. Core Hours
+All employees, regardless of location, are expected to be online and reachable between 11:00 AM and 4:00 PM in their local time zone. Outside of core hours, employees may set their own schedule as long as deliverables are met.
+
+3. Home Office Stipend
+Remote and hybrid employees receive a one-time $500 home office setup stipend in their first 90 days, plus an ongoing $40/month stipend for internet and utilities. Requests are submitted through the Expensify portal under the "Home Office" category.
+
+4. Working From Abroad
+Employees may work from a foreign country for up to 20 business days per year without special approval, provided they notify HR at least 2 weeks in advance for tax and compliance tracking. Longer arrangements require legal and HR review due to tax and visa implications.
+
+5. Equipment for Remote Work
+Company laptops, monitors, and headsets ship to the employee's registered home address. Employees are responsible for a secure home network (WPA2/WPA3 encrypted Wi-Fi) and must use the company VPN when accessing internal systems, per the Information Security Policy (IT-SEC-014).
+
+6. Meeting Etiquette
+Cameras should be on for team meetings unless there is a stated accommodation. Meetings with any remote participant must have a virtual join option — no "phone in the corner of the room" setups.
+
+7. Performance Expectations
+Remote and hybrid employees are held to the same performance standards as in-office employees. Managers are expected to evaluate output and outcomes rather than hours logged or visible activity.

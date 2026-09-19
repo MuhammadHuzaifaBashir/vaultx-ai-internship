@@ -1,0 +1,215 @@
+{
+  "summary": {
+    "total_questions": 18,
+    "answerable_questions": 15,
+    "correct_source_retrieval": "12/15",
+    "unanswerable_questions": 3,
+    "correctly_refused": "3/3"
+  },
+  "results": [
+    {
+      "question": "How many days of annual leave do full-time employees accrue per year?",
+      "expected_source": "hr_leave_policy.txt",
+      "retrieved_sources": [
+        "hr_leave_policy.txt",
+        "hr_leave_policy.txt",
+        "hr_leave_policy.txt",
+        "hr_leave_policy.txt"
+      ],
+      "source_match": true,
+      "correctly_refused": null,
+      "answer": "Full-time employees accrue 18 days of paid annual leave per calendar year [hr_leave_policy.txt::chunk1]."
+    },
+    {
+      "question": "How many consecutive sick days trigger a requirement for a medical certificate?",
+      "expected_source": "hr_leave_policy.txt",
+      "retrieved_sources": [
+        "hr_leave_policy.txt",
+        "hr_leave_policy.txt",
+        "hr_leave_policy.txt",
+        "hr_leave_policy.txt"
+      ],
+      "source_match": true,
+      "correctly_refused": null,
+      "answer": "A medical certificate is required for any sick leave exceeding 2 consecutive days [hr_leave_policy.txt::chunk2]."
+    },
+    {
+      "question": "How many weeks of paid parental leave does a primary caregiver get?",
+      "expected_source": "hr_leave_policy.txt",
+      "retrieved_sources": [
+        "hr_leave_policy.txt",
+        "hr_leave_policy.txt",
+        "hr_leave_policy.txt",
+        "hr_leave_policy.txt"
+      ],
+      "source_match": true,
+      "correctly_refused": null,
+      "answer": "A primary caregiver is entitled to 16 weeks of paid parental leave [hr_leave_policy.txt::chunk3]."
+    },
+    {
+      "question": "How long must employee passwords be?",
+      "expected_source": "it_security_policy.txt",
+      "retrieved_sources": [
+        "it_security_policy.txt",
+        "it_security_policy.txt",
+        "it_security_policy.txt",
+        "it_security_policy.txt"
+      ],
+      "source_match": true,
+      "correctly_refused": null,
+      "answer": "Employee passwords must be at least 14 characters [it_security_policy.txt::chunk1]."
+    },
+    {
+      "question": "Within how many hours must a suspected security incident be reported?",
+      "expected_source": "it_security_policy.txt",
+      "retrieved_sources": [
+        "it_security_policy.txt",
+        "it_security_policy.txt",
+        "it_security_policy.txt",
+        "it_security_policy.txt"
+      ],
+      "source_match": true,
+      "correctly_refused": null,
+      "answer": "A suspected security incident must be reported within 1 hour of discovery [it_security_policy.txt::chunk4]."
+    },
+    {
+      "question": "What form is required before using a third-party automation tool like n8n or Make on company systems?",
+      "expected_source": "it_security_policy.txt",
+      "retrieved_sources": [
+        "it_security_policy.txt",
+        "it_security_policy.txt",
+        "onboarding_guide.txt",
+        "it_security_policy.txt"
+      ],
+      "source_match": true,
+      "correctly_refused": null,
+      "answer": "The Tool Request Form is required to get approval from the IT Security team before using third-party automation tools like n8n or Make on company systems [it_security_policy.txt::chunk6]."
+    },
+    {
+      "question": "How many business days before a new hire's start date does IT ship the laptop?",
+      "expected_source": "onboarding_guide.txt",
+      "retrieved_sources": [
+        "onboarding_guide.txt",
+        "onboarding_guide.txt",
+        "remote_work_policy.txt",
+        "onboarding_guide.txt"
+      ],
+      "source_match": true,
+      "correctly_refused": null,
+      "answer": "IT ships the laptop to arrive 2 business days before the new hire's start date [onboarding_guide.txt::chunk1]."
+    },
+    {
+      "question": "How long is the probation period for new hires?",
+      "expected_source": "onboarding_guide.txt",
+      "retrieved_sources": [
+        "onboarding_guide.txt",
+        "onboarding_guide.txt",
+        "onboarding_guide.txt",
+        "onboarding_guide.txt"
+      ],
+      "source_match": true,
+      "correctly_refused": null,
+      "answer": "The probation period for new hires is 90 days [onboarding_guide.txt::chunk4]."
+    },
+    {
+      "question": "How long does the onboarding buddy program last?",
+      "expected_source": "onboarding_guide.txt",
+      "retrieved_sources": [
+        "onboarding_guide.txt",
+        "onboarding_guide.txt",
+        "onboarding_guide.txt",
+        "onboarding_guide.txt"
+      ],
+      "source_match": true,
+      "correctly_refused": null,
+      "answer": "The onboarding buddy program lasts for a new hire's first 60 days [onboarding_guide.txt::chunk7]."
+    },
+    {
+      "question": "What is the daily meal reimbursement cap while traveling?",
+      "expected_source": "expense_policy.txt",
+      "retrieved_sources": [
+        "expense_policy.txt",
+        "expense_policy.txt",
+        "expense_policy.txt",
+        "expense_policy.txt"
+      ],
+      "source_match": true,
+      "correctly_refused": null,
+      "answer": "The daily meal reimbursement while traveling is capped at $75 per day ($20 for breakfast, $25 for lunch, and $30 for dinner) [expense_policy.txt::chunk4]."
+    },
+    {
+      "question": "Within how many days of an expense being incurred must it be submitted?",
+      "expected_source": "expense_policy.txt",
+      "retrieved_sources": [
+        "expense_policy.txt",
+        "expense_policy.txt",
+        "expense_policy.txt",
+        "expense_policy.txt"
+      ],
+      "source_match": true,
+      "correctly_refused": null,
+      "answer": "Expenses must be submitted within 30 days of being incurred [expense_policy.txt::chunk2]."
+    },
+    {
+      "question": "What expense amount requires VP-level approval?",
+      "expected_source": "expense_policy.txt",
+      "retrieved_sources": [],
+      "source_match": false,
+      "correctly_refused": null,
+      "answer": "NOT_FOUND: Generation failed after 3 attempts (429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 58.712584477s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.6-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '58s'}]}})."
+    },
+    {
+      "question": "How many days per week are employees expected in the office under the hybrid model?",
+      "expected_source": "remote_work_policy.txt",
+      "retrieved_sources": [],
+      "source_match": false,
+      "correctly_refused": null,
+      "answer": "NOT_FOUND: Generation failed after 3 attempts (429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 45.517932483s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.6-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '45s'}]}})."
+    },
+    {
+      "question": "What is the one-time home office setup stipend amount?",
+      "expected_source": "remote_work_policy.txt",
+      "retrieved_sources": [],
+      "source_match": false,
+      "correctly_refused": null,
+      "answer": "NOT_FOUND: Generation failed after 3 attempts (429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 32.272101748s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-3.6-flash', 'location': 'global'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '32s'}]}})."
+    },
+    {
+      "question": "How many business days per year can an employee work from abroad without special approval?",
+      "expected_source": "remote_work_policy.txt",
+      "retrieved_sources": [
+        "remote_work_policy.txt",
+        "remote_work_policy.txt",
+        "hr_leave_policy.txt",
+        "remote_work_policy.txt"
+      ],
+      "source_match": true,
+      "correctly_refused": null,
+      "answer": "An employee can work from a foreign country for up to 20 business days per year without special approval [remote_work_policy.txt::chunk4]."
+    },
+    {
+      "question": "What is the company's policy on stock option vesting schedules?",
+      "expected_source": null,
+      "retrieved_sources": [],
+      "source_match": null,
+      "correctly_refused": true,
+      "answer": "NOT_FOUND: The documents don't contain enough information to answer this question."
+    },
+    {
+      "question": "What is the CEO's name?",
+      "expected_source": null,
+      "retrieved_sources": [],
+      "source_match": null,
+      "correctly_refused": true,
+      "answer": "NOT_FOUND: The documents don't contain enough information to answer this question."
+    },
+    {
+      "question": "Does NimbusWorks offer a gym membership discount?",
+      "expected_source": null,
+      "retrieved_sources": [],
+      "source_match": null,
+      "correctly_refused": true,
+      "answer": "NOT_FOUND: Generation failed after 3 attempts (429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 9.886929016s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.6-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '9s'}]}})."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+NimbusWorks Inc. — Information Security Policy
+Document ID: IT-SEC-014
+Last Updated: January 2026
+
+1. Password Requirements
+All employee accounts must use passwords of at least 14 characters, including a mix of uppercase, lowercase, numbers, and symbols. Passwords must be changed every 180 days. Password reuse across the last 8 passwords is prohibited. Multi-factor authentication (MFA) is mandatory for all accounts with access to production systems, email, or the VPN.
+
+2. Device Policy
+Company laptops must have full-disk encryption enabled and automatic screen lock after 5 minutes of inactivity. Personal devices used for work (BYOD) must be enrolled in the company's Mobile Device Management (MDM) system before accessing company email or Slack.
+
+3. Data Classification
+Data is classified into three tiers:
+- Public: may be shared externally without restriction.
+- Internal: for employee use only, not to be shared outside the company.
+- Confidential: includes customer data, financial records, and source code. Requires encryption at rest and in transit, and access is logged and reviewed quarterly.
+
+4. Incident Reporting
+Any suspected security incident (phishing email, lost device, unauthorized access, malware) must be reported to security@nimbusworks.example within 1 hour of discovery. Do not attempt to investigate or remediate the incident yourself — forward suspicious emails to the security team without opening attachments or links.
+
+5. Remote Access
+All remote access to internal systems must go through the company VPN. Split-tunneling is disabled by default. VPN sessions automatically time out after 8 hours of inactivity.
+
+6. Third-Party Tools
+Employees must not install or connect third-party SaaS tools (including AI tools, browser extensions, and automation platforms like Zapier, Make, or n8n) to company systems without approval from the IT Security team via the Tool Request Form. Any tool that will process Confidential data requires a Data Processing Assessment before approval.
+
+7. Security Training
+All employees must complete annual security awareness training within 30 days of their hire anniversary. Failure to complete training may result in suspension of system access.

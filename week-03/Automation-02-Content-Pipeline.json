@@ -1,0 +1,245 @@
+{
+  "name": "Automation-02-Content-Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "13MzHSBG62KrS4hKWokzXQk_y8JdE11j5qrhCI975qY8",
+          "mode": "list",
+          "cachedResultName": "content-pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13MzHSBG62KrS4hKWokzXQk_y8JdE11j5qrhCI975qY8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13MzHSBG62KrS4hKWokzXQk_y8JdE11j5qrhCI975qY8/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e43eaeb8-3e29-4863-8671-e2ef59f53116",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "a16MhrUArbYVdaM0",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a content assistant. Based on the following raw content, generate three things.\n\nReturn ONLY valid JSON in this exact format, nothing else — no markdown, no explanation:\n{\n  \"summary\": \"a 2-3 sentence summary\",\n  \"tags\": \"3-5 comma-separated relevant tags\",\n  \"draft\": \"a short 3-4 sentence social media post draft based on this content\"\n}\n\nTitle: {{ $json.Title }}\nContent: {{ $json.RawContent }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "b3a2fb9e-2bdc-42c9-a0e2-4f372388a898",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "CPV5L34GDBokuvDb",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.content.parts[0].text;\nconst parsed = JSON.parse(raw);\nreturn [{\n  json: {\n    Title: $('Google Sheets Trigger').item.json.Title,\n    RawContent: $('Google Sheets Trigger').item.json.RawContent,\n    Summary: parsed.summary,\n    Tags: parsed.tags,\n    Draft: parsed.draft\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        0
+      ],
+      "id": "0f0a98f2-2fc2-4801-89c4-95a967214e04",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "13MzHSBG62KrS4hKWokzXQk_y8JdE11j5qrhCI975qY8",
+          "mode": "list",
+          "cachedResultName": "content-pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13MzHSBG62KrS4hKWokzXQk_y8JdE11j5qrhCI975qY8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13MzHSBG62KrS4hKWokzXQk_y8JdE11j5qrhCI975qY8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "Title"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "RawContent",
+              "displayName": "RawContent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft",
+              "displayName": "Draft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        0
+      ],
+      "id": "3b3f0192-6f9f-492c-9fc3-29206ec06c88",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aryK91a5RkvDZB2k",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "d70f12d0-3331-46f5-8eda-216065174a36",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "62092fe43cd43a99dc494b92319f7ae98903d4a3d36b1f0a1ab157c2f19aa1d8"
+  },
+  "nodeGroups": [],
+  "id": "UB0ELHs5zlfdHIlU",
+  "tags": []
+}
