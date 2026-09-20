@@ -1,0 +1,17 @@
+# week-06/whatsapp-bot/.gitignore
+.env
+.env.*
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+venv/
+logs/
+*.log
+data/
+static/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+week-06/

@@ -1,0 +1,49 @@
+# Loom & Thread Boutique — Product Knowledge Base
+
+## About
+A premium boutique offering high-quality Pakistani and Indo-Western clothing. Located in Lahore, Pakistan.
+
+## Products
+
+### Embroidered Cotton Kurti (ID: KT-001) | PKR 2,499
+Sizes: S,M,L,XL | Colors: white, blue, pink, green | Stock: 15
+Hand-embroidered cotton kurti with delicate thread work. Perfect for summer.
+
+### Silk Anarkali Suit (ID: KT-002) | PKR 5,999
+Sizes: S,M,L,XL | Colors: red, maroon, gold, navy | Stock: 8
+Designer silk Anarkali with heavy zari border. Ideal for weddings.
+
+### Designer Lehenga (ID: LEH-001) | PKR 12,999
+Sizes: S,M,L,XL | Colors: red, gold, green, black | Stock: 3
+Premium designer lehenga with intricate thread work and sequins.
+
+### Classic Straight Jeans (ID: DW-001) | PKR 3,499
+Sizes: 28,30,32,34,36 | Colors: blue, black, white | Stock: 25
+Comfortable straight-fit jeans made from premium denim cotton.
+
+### Chiffon Palazzo Set (ID: PRL-001) | PKR 3,999
+Sizes: S,M,L,XL | Colors: peach, mint, lavender, cream | Stock: 12
+Lightweight chiffon palazzo set with printed dupatta.
+
+### Leather Handbag (ID: ACC-001) | PKR 4,999
+Sizes: Small,Medium,Large | Colors: brown, black, white | Stock: 10
+Handcrafted genuine leather handbag with brass hardware.
+
+### Designer Dupatta (ID: SCF-001) | PKR 1,999
+Sizes: One Size | Colors: red, blue, green, gold, peach | Stock: 20
+Exquisite designer dupatta with heavy embroidery work.
+
+### Net Embroidery Top (ID: KT-003) | PKR 2,999
+Sizes: S,M,L,XL | Colors: black, white, gold, navy | Stock: 10
+Trendy net embroidery top with cotton lining.
+
+### Embroidered Sherwani (ID: SHER-001) | PKR 15,999
+Sizes: S,M,L,XL | Colors: white, cream, gold, navy | Stock: 2
+Premium brocade silk sherwani with heavy gold thread embroidery.
+
+### Winter Puffer Jacket (ID: JKT-001) | PKR 6,999
+Sizes: S,M,L,XL | Colors: black, navy, olive, brown | Stock: 8
+Warm winter puffer jacket with down fill. Water-resistant.
+
+## Size Guide: S=34-36, M=38-40, L=42-44, XL=46-48
+## Free delivery above PKR 3000 in Lahore. Cash on delivery available.

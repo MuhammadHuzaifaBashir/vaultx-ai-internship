@@ -1,0 +1,136 @@
+{
+  "name": "Simple Chat Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "boutique-webhook",
+        "httpMethod": "POST",
+        "responseMode": "responseNode"
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2c2b3a5c-f080-4cbb-80d0-66cc13ba2765",
+      "connections": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "webhookId": "boutique-webhook"
+    },
+    {
+      "parameters": {
+        "model": "models/gemini-3.5-flash-lite",
+        "text": "Answer customer questions about Loom & Thread Boutique.",
+        "promptType": "define"
+      },
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        300,
+        0
+      ],
+      "id": "4508af9e-582e-4383-b40a-bd349a7f8d66",
+      "credentials": {
+        "googleGeminiApi": {
+          "id": "google-gemini-1",
+          "name": "Google Gemini Api"
+        }
+      },
+      "connections": {
+        "main": [
+          [
+            {
+              "node": "Reply",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/1268258293044883/messages",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "messaging_product",
+              "value": "whatsapp"
+            },
+            {
+              "name": "to",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "type",
+              "value": "text"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.message }}"
+            }
+          ]
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "name": "Reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        600,
+        0
+      ],
+      "id": "6bcbb4c1-c000-4982-916a-853271fb3a70",
+      "connections": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "parameters": {
+        "responseCode": 200,
+        "responseData": "allEntries"
+      },
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        900,
+        0
+      ],
+      "id": "dd687147-9cfb-4063-ad40-3c2db081087c",
+      "connections": {
+        "main": []
+      }
+    }
+  ],
+  "connections": {},
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [],
+  "id": "500e153f-3596-4fcd-8e4c-7d64394ead59"
+}
