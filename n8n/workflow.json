@@ -1,0 +1,119 @@
+{
+  "name": "Boutique Follow-Up Automation",
+  "nodes": [
+    {
+      "id": "webhook_trigger",
+      "name": "WhatsApp Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "position": [0, 0],
+      "parameters": {
+        "path": "boutique-webhook",
+        "httpMethod": "POST",
+        "responseMode": "responseNode"
+      }
+    },
+    {
+      "id": "ai_classify",
+      "name": "AI Message Classifier",
+      "type": "n8n-nodes-base.openAi",
+      "position": [250, 0],
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "prompt": "Classify the incoming WhatsApp message as one of: 'product_inquiry', 'order_request', 'lead', 'complaint', 'general_chat'. Return only the category and extracted details (product name, size, color, customer name, phone).",
+        "text": "{{ $json.message }}"
+      }
+    },
+    {
+      "id": "order_capture",
+      "name": "Order Data Capture",
+      "type": "n8n-nodes-base.set",
+      "position": [500, 0],
+      "parameters": {
+        "fields": {
+          "orderId": "={{ $json.orderId }}",
+          "customerName": "={{ $json.name }}",
+          "customerPhone": "={{ $json.phone }}",
+          "product": "={{ $json.product }}",
+          "size": "={{ $json.size }}",
+          "color": "={{ $json.color }}",
+          "total": "={{ $json.total }}",
+          "status": "pending",
+          "timestamp": "={{ new Date().toISOString() }}"
+        }
+      }
+    },
+    {
+      "id": "owner_notification",
+      "name": "Notify Owner via WhatsApp",
+      "type": "n8n-nodes-base.whatsApp",
+      "position": [750, -100],
+      "parameters": {
+        "to": "+923001234567",
+        "message": "🛒 NEW ORDER — Loom & Thread Boutique\nCustomer: {{ $json.name }}\nPhone: {{ $json.phone }}\nProduct: {{ $json.product }}\nSize: {{ $json.size }}\nColor: {{ $json.color }}\nTotal: PKR {{ $json.total }}\nStatus: Pending",
+        "phoneNumberId": "1268258293044883"
+      }
+    },
+    {
+      "id": "customer_confirmation",
+      "name": "Send Customer Confirmation",
+      "type": "n8n-nodes-base.whatsApp",
+      "position": [750, 100],
+      "parameters": {
+        "to": "={{ $json.customerPhone }}",
+        "message": "✅ Thank you {{ $json.customerName }}! Your order for {{ $json.product }} ({{ $json.size }}, {{ $json.color }}) — PKR {{ $json.total }} has been received. Cash on delivery. We'll confirm within 2 hours.",
+        "phoneNumberId": "1268258293044883"
+      }
+    },
+    {
+      "id": "delay_followup",
+      "name": "Wait 2 Days",
+      "type": "n8n-nodes-base.wait",
+      "position": [1000, 0],
+      "parameters": {
+        "amount": 2,
+        "unit": "days"
+      }
+    },
+    {
+      "id": "followup_check",
+      "name": "Check Order Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [1250, 0],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'http://localhost:8001/orders/' + $json.orderId }}",
+        "authentication": "none"
+      }
+    },
+    {
+      "id": "followup_message",
+      "name": "Send Follow-Up",
+      "type": "n8n-nodes-base.whatsApp",
+      "position": [1500, 0],
+      "parameters": {
+        "to": "={{ $json.customerPhone }}",
+        "message": "Hi {{ $json.customerName }}! Just checking in — did you receive your {{ $json.product }} order? Reply YES to confirm or contact us for any changes. Thanks! 💐",
+        "phoneNumberId": "1268258293044883"
+      }
+    },
+    {
+      "id": "data_store",
+      "name": "Save to Spreadsheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [500, 300],
+      "parameters": {
+        "operation": "append",
+        "sheetId": "BOUTIQUE_ORDERS",
+        "columns": ["orderId", "customerName", "customerPhone", "product", "size", "color", "total", "status", "timestamp"]
+      }
+    }
+  ],
+  "connections": {
+    "webhook_trigger": {"main": [[{"node": "ai_classify", "type": "main", "index": 0}]]},
+    "ai_classify": {"main": [[{"node": "order_capture", "type": "main", "index": 0}]]},
+    "order_capture": {"main": [[{"node": "owner_notification", "type": "main", "index": 0}, {"node": "customer_confirmation", "type": "main", "index": 0}, {"node": "data_store", "type": "main", "index": 0}]]},
+    "data_store": {"main": [[{"node": "delay_followup", "type": "main", "index": 0}]]},
+    "delay_followup": {"main": [[{"node": "followup_check", "type": "main", "index": 0}]]},
+    "followup_check": {"main": [[{"node": "followup_message", "type": "main", "index": 0}]]}
+  }
+}
