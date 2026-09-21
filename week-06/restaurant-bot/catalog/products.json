@@ -1,0 +1,42 @@
+{
+  "restaurant": {
+    "name": "SpiceRoute Restaurant",
+    "location": "Lahore, Pakistan",
+    "owner": "Bilal Sheikh",
+    "owner_phone": "+923****4567",
+    "whatsapp_number": "+923****3411",
+    "currency": "PKR",
+    "cuisine": "Pakistani, Chinese, Continental",
+    "hours": "11:00 AM - 11:00 PM",
+    "delivery_range": "5 km"
+  },
+  "menu": {
+    "appetizers": [
+      {"id": "APP-001", "name": "Chicken Momos", "price": 599, "stock": 30, "description": "Steamed dumplings with spicy tomato sauce.", "category": "appetizers"},
+      {"id": "APP-002", "name": "Aloo Tikki", "price": 299, "stock": 50, "description": "Crispy potato patties with chutney.", "category": "appetizers"},
+      {"id": "APP-003", "name": "Spring Rolls", "price": 399, "stock": 40, "description": "Crispy vegetable spring rolls with sweet chili sauce.", "category": "appetizers"}
+    ],
+    "main_course": [
+      {"id": "MC-001", "name": "Biryani", "price": 1299, "stock": 20, "description": "Fragrant basmati rice with marinated chicken.", "category": "main_course", "spicy": true},
+      {"id": "MC-002", "name": "Karahi Chicken", "price": 1199, "stock": 15, "description": "Traditional wok-cooked chicken with tomatoes and cream.", "category": "main_course", "spicy": true},
+      {"id": "MC-003", "name": "Palak Paneer", "price": 899, "stock": 25, "description": "Cottage cheese in creamy spinach gravy.", "category": "main_course", "spicy": false},
+      {"id": "MC-004", "name": "Chicken Karahi", "price": 1099, "stock": 18, "description": "Succulent chicken cooked in a rich kadhai gravy.", "category": "main_course", "spicy": true},
+      {"id": "MC-005", "name": "Dal Makhani", "price": 699, "stock": 30, "description": "Black lentils simmered overnight with butter and cream.", "category": "main_course", "spicy": false}
+    ],
+    "biryani": [
+      {"id": "BI-001", "name": "Vegetable Biryani", "price": 899, "stock": 25, "description": "Aromatic rice mixed with seasonal vegetables.", "category": "biryani", "spicy": false},
+      {"id": "BI-002", "name": "Chicken Biryani", "price": 1299, "stock": 20, "description": "Basmati rice with tender marinated chicken pieces.", "category": "biryani", "spicy": true},
+      {"id": "BI-003", "name": "Mutton Biryani", "price": 1899, "stock": 12, "description": "Premium mutton pieces with fragrant rice.", "category": "biryani", "spicy": true}
+    ],
+    "desserts": [
+      {"id": "DS-001", "name": "Gulab Jamun", "price": 399, "stock": 40, "description": "Deep-fried dough balls in sweet rose syrup.", "category": "desserts"},
+      {"id": "DS-002", "name": "Kheer", "price": 299, "stock": 35, "description": "Rice pudding with cardamom, nuts, and saffron.", "category": "desserts"},
+      {"id": "DS-003", "name": "Rabri", "price": 349, "stock": 30, "description": "Thickened milk with nuts and rose water.", "category": "desserts"}
+    ],
+    "drinks": [
+      {"id": "DR-001", "name": "Lassi", "price": 199, "stock": 50, "description": "Refreshing yogurt drink, sweet or salty.", "category": "drinks"},
+      {"id": "DR-002", "name": "Nimbu Pani", "price": 149, "stock": 50, "description": "Fresh lemonade with mint and cumin.", "category": "drinks"},
+      {"id": "DR-003", "name": "Masala Chai", "price": 99, "stock": 60, "description": "Traditional spiced Indian tea.", "category": "drinks"}
+    ]
+  }
+}

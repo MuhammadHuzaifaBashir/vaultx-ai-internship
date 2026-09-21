@@ -1,0 +1,17 @@
+.env
+.env.*
+!env.example
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+venv/
+logs/
+*.log
+data/
+static/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+week-06/
