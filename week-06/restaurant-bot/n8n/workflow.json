@@ -1,5 +1,5 @@
 {
-  "name": "Restaurant Follow-Up Automation",
+  "name": "SpiceRoute Restaurant Automation",
   "nodes": [
     {
       "parameters": {
@@ -11,29 +11,21 @@
       "name": "WhatsApp Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [
-        0,
-        0
-      ],
+      "position": [0, 0],
       "id": "rest-webhook-id",
       "webhookId": "restaurant-webhook"
     },
     {
       "parameters": {
         "model": "models/gemini-3.5-flash-lite",
-        "options": {
-          "temperature": 0.7
-        },
-        "text": "={{ $json.message }}\n\nYou are a restaurant assistant for SpiceRoute Restaurant. Help customers order food, answer menu questions, and confirm orders.",
+        "options": {"temperature": 0.7},
+        "text": "={{ $json.message }}\n\nYou are the AI assistant for SpiceRoute Restaurant in Lahore, Pakistan. Help customers order food, answer menu questions, and confirm orders. If the message indicates an order, extract the items, customer name, phone, and address. If the message asks about order status, look up the order ID.",
         "promptType": "define"
       },
       "name": "AI Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
-      "position": [
-        300,
-        0
-      ],
+      "position": [300, 0],
       "id": "rest-ai-id",
       "credentials": {
         "googleGeminiApi": {
@@ -44,40 +36,14 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://graph.facebook.com/v18.0/1268258293044883/messages",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "messaging_product",
-              "value": "whatsapp"
-            },
-            {
-              "name": "to",
-              "value": "={{ $json.ownerPhone || '+923****3411' }}"
-            },
-            {
-              "name": "type",
-              "value": "text"
-            },
-            {
-              "name": "text",
-              "value": "\ud83d\udd14 NEW ORDER from SpiceRoute\nCustomer: {{ $json.name }}\nItems: {{ $json.items }}\nPhone: {{ $json.phone }}\nTotal: PKR {{ $json.total }}"
-            }
-          ]
-        },
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth"
+        "mode": "runOnceForEachItem",
+        "jsCode": "const items = $input.all();\nconst data = items[0].json;\n\n// Determine if this is an order or a chat message\nconst orderKeywords = ['order', 'want', 'need', 'book', 'deliver', 'i want', 'i would like', 'can i have'];\nconst msg = (data.message || '').toLowerCase();\nconst isOrder = orderKeywords.some(kw => msg.includes(kw));\nconst isStatus = msg.includes('status') || msg.includes('track') || msg.includes('where');\nconst isCancel = msg.includes('cancel') || msg.includes('remove');\nconst isMenu = msg.includes('menu') || msg.includes('show menu');\n\nconst orderType = isOrder ? 'order' : isStatus ? 'status' : isCancel ? 'cancel' : isMenu ? 'menu' : 'chat';\n\nreturn [{\n  json: {\n    ...data,\n    orderType: orderType,\n    orderId: data.order_id || null,\n    items: data.items || [],\n    name: data.name || data.customer_name || 'Customer',\n    phone: data.phone || '+923****0000',\n    total: data.total || 0,\n    address: data.address || '',\n  }\n}];"
       },
-      "name": "Notify Owner",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        600,
-        -100
-      ],
-      "id": "rest-notify-id"
+      "name": "Route Order Type",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [600, 0],
+      "id": "rest-route-id"
     },
     {
       "parameters": {
@@ -86,35 +52,42 @@
         "sendBody": true,
         "bodyParameters": {
           "parameters": [
-            {
-              "name": "messaging_product",
-              "value": "whatsapp"
-            },
-            {
-              "name": "to",
-              "value": "={{ $json.phone }}"
-            },
-            {
-              "name": "type",
-              "value": "text"
-            },
-            {
-              "name": "text",
-              "value": "\u2705 Order placed at SpiceRoute! \ud83c\udf7d\ufe0f\nYour food is being prepared.\nDelivery: 30-45 minutes.\nThank you!"
-            }
+            {"name": "messaging_product", "value": "whatsapp"},
+            {"name": "to", "value": "={{ $json.phone }}"},
+            {"name": "type", "value": "text"},
+            {"name": "text", "value": "🌟 *Order Confirmed!*\\n\\nCustomer: {{ $json.name }}\\nItems: {{ $json.items.join('\\n') }}\\nTotal: PKR {{ $json.total }}\\n\\nThank you for ordering at SpiceRoute! 🍽️\\nDelivery: 30-45 minutes.\\nTrack your order anytime by texting 'status ORD-XXX'"}
           ]
         },
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth"
       },
-      "name": "Customer Confirmed",
+      "name": "Send Customer Confirmation",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [
-        600,
-        100
-      ],
+      "position": [900, -150],
       "id": "rest-confirm-id"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/1268258293044883/messages",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "messaging_product", "value": "whatsapp"},
+            {"name": "to", "value": "{{ $json.adminPhone || '+923****4567' }}"},
+            {"name": "type", "value": "text"},
+            {"name": "text", "value": "🔔 NEW ORDER from SpiceRoute\\nCustomer: {{ $json.name }}\\nPhone: {{ $json.phone }}\\nItems: {{ $json.items.join(', ') }}\\nTotal: PKR {{ $json.total }}\\nAddress: {{ $json.address || 'N/A' }}\\nStatus: NEW"}
+          ]
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "name": "Notify Owner",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 150],
+      "id": "rest-notify-id"
     },
     {
       "parameters": {
@@ -124,10 +97,7 @@
       "name": "Wait 2 Days",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [
-        600,
-        300
-      ],
+      "position": [1200, 0],
       "id": "rest-wait-id"
     },
     {
@@ -137,22 +107,10 @@
         "sendBody": true,
         "bodyParameters": {
           "parameters": [
-            {
-              "name": "messaging_product",
-              "value": "whatsapp"
-            },
-            {
-              "name": "to",
-              "value": "={{ $json.phone }}"
-            },
-            {
-              "name": "type",
-              "value": "text"
-            },
-            {
-              "name": "text",
-              "value": "Hi {{ $json.name }}! Hope you enjoyed your meal. Want to order again? \ud83d\ude0a"
-            }
+            {"name": "messaging_product", "value": "whatsapp"},
+            {"name": "to", "value": "={{ $json.phone }}"},
+            {"name": "type", "value": "text"},
+            {"name": "text", "value": "Hi {{ $json.name }}! 😊\\nHope you enjoyed your meal at SpiceRoute! 🍽️\\nWant to order again? Just text us! 🔥\\nSpecial today: Try our new Mutton Biryani! 🌶️"}
           ]
         },
         "authentication": "genericCredentialType",
@@ -161,11 +119,30 @@
       "name": "Send Follow-Up",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [
-        900,
-        300
-      ],
+      "position": [1500, 0],
       "id": "rest-followup-id"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/1268258293044883/messages",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "messaging_product", "value": "whatsapp"},
+            {"name": "to", "value": "={{ $json.phone }}"},
+            {"name": "type", "value": "text"},
+            {"name": "text", "value": "={{ $json.aiResponse || 'Thanks for contacting SpiceRoute! How can I help you?' }}"}
+          ]
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "name": "Send Chat Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300],
+      "id": "rest-chat-response-id"
     },
     {
       "parameters": {
@@ -176,93 +153,66 @@
       "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [
-        600,
-        0
-      ],
-      "id": "939f0593-166b-4d8d-9503-ea35b235d647"
+      "position": [600, 300],
+      "id": "rest-respond-id"
+    },
+    {
+      "parameters": {
+        "model": "models/gemini-3.5-flash-lite",
+        "options": {"temperature": 0.3},
+        "text": "={{ \"Check the status of order: \" + $json.orderId + \"\\n\\nReturn ONLY the status (pending/confirmed/preparing/ready/on_the_way/delivered/cancelled) and a brief 2-sentence update. Be concise.\" }}",
+        "promptType": "define"
+      },
+      "name": "Order Status Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [600, -300],
+      "id": "rest-status-agent-id",
+      "credentials": {
+        "googleGeminiApi": {
+          "id": "google-gemini-1",
+          "name": "Google Gemini Api"
+        }
+      }
     }
   ],
   "connections": {
     "WhatsApp Webhook": {
       "main": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Respond to Webhook",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [{"node": "AI Agent", "type": "main", "index": 0}],
+        [{"node": "Respond to Webhook", "type": "main", "index": 0}]
       ]
     },
     "AI Agent": {
       "main": [
-        [
-          {
-            "node": "Notify Owner",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Customer Confirmed",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [{"node": "Route Order Type", "type": "main", "index": 0}]
       ]
+    },
+    "Route Order Type": {
+      "main": [
+        [{"node": "Send Customer Confirmation", "type": "main", "index": 0}],
+        [{"node": "Notify Owner", "type": "main", "index": 0}],
+        [{"node": "Order Status Agent", "type": "main", "index": 0}],
+        [{"node": "Send Chat Response", "type": "main", "index": 0}]
+      ]
+    },
+    "Send Customer Confirmation": {
+      "main": [[{"node": "Notify Owner", "type": "main", "index": 0}]]
     },
     "Notify Owner": {
-      "main": [
-        [
-          {
-            "node": "Wait 2 Days",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Customer Confirmed": {
-      "main": [
-        [
-          {
-            "node": "Wait 2 Days",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "Wait 2 Days", "type": "main", "index": 0}]]
     },
     "Wait 2 Days": {
-      "main": [
-        [
-          {
-            "node": "Send Follow-Up",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "Send Follow-Up", "type": "main", "index": 0}]]
+    },
+    "Order Status Agent": {
+      "main": [[{"node": "Send Chat Response", "type": "main", "index": 0}]]
+    },
+    "Send Chat Response": {
+      "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
     },
     "Send Follow-Up": {
-      "main": [
-        [
-          {
-            "node": "Respond to Webhook",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
     },
     "Respond to Webhook": {
       "main": []
@@ -270,8 +220,9 @@
   },
   "active": true,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": true,
+    "saveDataErrorExecution": true
   },
-  "tags": [],
-  "id": "restaurant-automation-id"
+  "id": "spiceroute-automation-v2"
 }
